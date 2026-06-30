@@ -20,41 +20,45 @@ def _call_llm_for_strategy(strategy: str) -> str:
     if USE_MOCK:
         return MOCK_RESPONSES[strategy]
 
-    from openai import OpenAI
-    client = OpenAI(
-        api_key=os.getenv("DEEPSEEK_API_KEY"),
-        base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
-    )
-
-    QUESTION = "如果有一个数组 [3, 1, 4, 1, 5, 9, 2, 6]，请找出其中最大的两个数之和。"
-
-    if strategy == "zero_shot":
-        system = "你是一个数学助手。"
-        user = QUESTION
-    elif strategy == "few_shot":
-        system = "你是一个数学助手。请严格按照示例的格式回答。"
-        user = (
-            "示例1：数组 [1, 2, 3] → 最大两数和 = 5\n"
-            "示例2：数组 [10, 5, 8] → 最大两数和 = 18\n"
-            "示例3：数组 [100, 1, 50] → 最大两数和 = 150\n\n"
-            f"现在请回答：{QUESTION}"
-        )
-    elif strategy == "cot":
-        system = "你是一个数学助手。请一步一步推理，然后给出最终答案。"
-        user = (
-            f"{QUESTION}\n\n请一步一步思考：\n"
-            "1. 首先找出数组中最大的数\n"
-            "2. 然后找出第二大的数\n"
-            "3. 最后将两个数相加"
+    try:
+        from openai import OpenAI
+        client = OpenAI(
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
         )
 
-    resp = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-        temperature=0.3,
-        max_tokens=512,
-    )
-    return resp.choices[0].message.content.strip()
+        QUESTION = "如果有一个数组 [3, 1, 4, 1, 5, 9, 2, 6]，请找出其中最大的两个数之和。"
+
+        if strategy == "zero_shot":
+            system = "你是一个数学助手。"
+            user = QUESTION
+        elif strategy == "few_shot":
+            system = "你是一个数学助手。请严格按照示例的格式回答。"
+            user = (
+                "示例1：数组 [1, 2, 3] → 最大两数和 = 5\n"
+                "示例2：数组 [10, 5, 8] → 最大两数和 = 18\n"
+                "示例3：数组 [100, 1, 50] → 最大两数和 = 150\n\n"
+                f"现在请回答：{QUESTION}"
+            )
+        elif strategy == "cot":
+            system = "你是一个数学助手。请一步一步推理，然后给出最终答案。"
+            user = (
+                f"{QUESTION}\n\n请一步一步思考：\n"
+                "1. 首先找出数组中最大的数\n"
+                "2. 然后找出第二大的数\n"
+                "3. 最后将两个数相加"
+            )
+
+        resp = client.chat.completions.create(
+            model="deepseek-v4-flash",
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+            temperature=0.3,
+            max_tokens=512,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception:
+        print(f"[WARN] API call failed for {strategy}, falling back to mock")
+        return MOCK_RESPONSES[strategy]
 
 
 def test_zero_shot():

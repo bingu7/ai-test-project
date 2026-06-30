@@ -8,7 +8,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 
 # Model configuration
-MODEL_NAME = "deepseek-chat"
+MODEL_NAME = "deepseek-v4-flash"
 TEMPERATURE = 0.7
 MAX_TOKENS = 1024
 
