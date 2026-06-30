@@ -19,19 +19,31 @@ def run_tests():
     print(f"  AI Test Suite - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
 
-    # Run with pytest
+    # Check if pytest-html is available
+    try:
+        import pytest_html  # noqa: F401
+        has_html = True
+    except ImportError:
+        has_html = False
+
+    # Build command
     cmd = [
         sys.executable, "-m", "pytest",
         "tests/",
         "-v",
-        "--html", report_file,
-        "--self-contained-html",
         "--tb=short",
     ]
+    if has_html:
+        cmd += ["--html", report_file, "--self-contained-html"]
 
     result = subprocess.run(cmd, capture_output=False)
-    print(f"\n{'=' * 60}")
-    print(f"  Report saved to: {report_file}")
+
+    if has_html:
+        print(f"\n{'=' * 60}")
+        print(f"  HTML report: {report_file}")
+    else:
+        print(f"\n{'=' * 60}")
+        print(f"  Tip: pip install pytest-html  →  get HTML report")
     print(f"  Exit code: {result.returncode}")
     print(f"{'=' * 60}")
 
