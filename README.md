@@ -2,6 +2,8 @@
 
 基于 DeepSeek 大模型 API 的 LLM 输出质量自动化评测系统。
 
+[![GitHub](https://img.shields.io/badge/GitHub-bingu7%2Fai--test--project-blue)](https://github.com/bingu7/ai-test-project)
+
 ## 功能
 
 - ✅ LLM 输出质量自动化评测（Faithfulness、Hallucination、Answer Relevancy 等）
