@@ -1,0 +1,17 @@
+# 环境
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+reports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
